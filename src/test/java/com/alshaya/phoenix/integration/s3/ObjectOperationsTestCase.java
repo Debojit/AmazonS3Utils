@@ -38,7 +38,7 @@ public class ObjectOperationsTestCase {
 	
 	@BeforeClass
 	public static void createUploadFiles() {
-		final int MAX_FILE_COUNT = 10;
+		final int MAX_FILE_COUNT = 2;
 		fileList = new ArrayList<FileKey>(MAX_FILE_COUNT);
 		
 		for (int i = 0; i < MAX_FILE_COUNT; i++) {
@@ -62,8 +62,9 @@ public class ObjectOperationsTestCase {
 	public static void cleanup() {
 		Assume.assumeTrue(null != fileList  && fileList.size() != 0);
 		try {
-			fileList.forEach(fileKey -> (new java.io.File(fileKey.localFileName)).delete());
-			fileList.forEach(fileKey -> (new java.io.File(FILE_IN_DIR + File.separator + Paths.get(fileKey.localFileName).getFileName())).delete());
+			fileList.forEach(fileKey -> {(new java.io.File(fileKey.localFileName)).delete();
+										 (new java.io.File(FILE_IN_DIR + File.separator + Paths.get(fileKey.localFileName).getFileName())).delete();
+										});
 		} catch(Exception ee) {
 			/**Ignore Error and continue**/
 		}
@@ -98,20 +99,31 @@ public class ObjectOperationsTestCase {
 	
 	@Test
 	public void tc4FileDownload() {
-		
-		for(FileKey downloadFile : fileList) {
-			boolean status = objOps.getObject(BUCKET_NAME, downloadFile.bucketObjKey, FILE_IN_DIR + File.separator + Paths.get(downloadFile.localFileName).getFileName());
-			Assert.assertTrue(status);
-		}
+		fileList.forEach(downloadFile -> {
+							boolean status = objOps.getObject(BUCKET_NAME, downloadFile.bucketObjKey, FILE_IN_DIR
+																										+ File.separator
+																										+ Paths.get(downloadFile.localFileName).getFileName());
+							Assert.assertTrue(status);
+						});
 	}
 	
 	@Test
 	public void tc5FileDelete() {
-		//TODO: Complete download obj code first
+		boolean status = objOps.deleteObject(BUCKET_NAME, fileList.get(0).bucketObjKey);
+		Assert.assertTrue(status);
 	}
 	
 	@Test
-	public void tc6ListBucketItems() {
+	public void tc6MultiFileDelete() {
+		List<String> objKeys = new ArrayList<String>(fileList.size());
+		fileList.forEach(fileEntry -> objKeys.add(fileEntry.bucketObjKey));
+		
+		boolean status = objOps.deleteObjects(BUCKET_NAME, objKeys);
+		Assert.assertTrue(status);
+	}
+	
+	@Test
+	public void tc7ListBucketItems() {
 		List<String> objKeys = objOps.listObject(BUCKET_NAME);
 		Assert.assertNotNull(objKeys);
 		Assert.assertNotEquals(objKeys.size(), 0);

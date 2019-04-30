@@ -13,11 +13,14 @@ import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.Delete;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -41,8 +44,7 @@ public class ObjectOperations {
 													  .bucket(bucketName)
 												      .key(objKey)
 												      .build();
-		GetObjectResponse response  = s3.getObject(request, ResponseTransformer.toFile(Paths.get(fileName)));
-		return response.sdkHttpResponse().isSuccessful();
+		return s3.getObject(request, ResponseTransformer.toFile(Paths.get(fileName))).sdkHttpResponse().isSuccessful();
 	}
 
 	public boolean putObject(String bucketName, String objKey, String objLocalPath) throws NoSuchBucketException,
@@ -58,19 +60,30 @@ public class ObjectOperations {
 		
 		return response.sdkHttpResponse().isSuccessful();
 	}
-
-	public String deleteObject(String bucketName, List<String> objKey) {
+	
+	public boolean deleteObject(String bucketName, String objKey) {
+		DeleteObjectRequest request = DeleteObjectRequest.builder()
+														   .bucket(bucketName)
+														   .key(objKey)
+														   .build();
 		
-//		Delete deleteObj = Delete.builder().
-//		DeleteObjectsRequest request = DeleteObjectsRequest.builder()
-//														   .bucket(bucketName)
-//														   .de
-//														   .build();
-//		
-//		
-//		DeleteObjectResponse response = s3.deleteObjects(request);
-//		return response.sdkHttpResponse().statusCode() + ":" + response.sdkHttpResponse().statusText().get();
-		return null;
+		return s3.deleteObject(request).sdkHttpResponse().isSuccessful();
+		
+	}
+
+	public boolean deleteObjects(String bucketName, List<String> objKeys) {
+		
+		List<ObjectIdentifier> objects = new ArrayList<ObjectIdentifier>();
+		objKeys.forEach(objKey -> objects.add(ObjectIdentifier.builder().key(objKey).build()));
+		
+			
+		DeleteObjectsRequest request = DeleteObjectsRequest.builder()
+														   .bucket(bucketName)
+														   .delete(delete -> Delete.builder().objects(objects))
+														   .build();
+		
+		return s3.deleteObjects(request).sdkHttpResponse().isSuccessful();
+		
 	}
 
 	public List<String> listObject(String bucketName) {
@@ -84,7 +97,7 @@ public class ObjectOperations {
 		ListObjectsV2Iterable listRes = s3.listObjectsV2Paginator(listReq);
 		listRes.stream()
 			   .flatMap(r -> r.contents().stream())
-			   .forEach(content-> objectList.add(content.key()));
+			   .forEach(content -> objectList.add(content.key()));
 		
 		return objectList;
 	}	
