@@ -29,8 +29,8 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 public class ObjectOperationsTestCase {
 	
 	private final String BUCKET_NAME = "als-fenix-bucket";
-	private final static String FILE_IN_DIR = "C:\\u04\\in";
-	private final static String FILE_OUT_DIR = "C:\\u04\\out";
+	private final static String FILE_IN_DIR = "C:\\u99\\in";
+	private final static String FILE_OUT_DIR = "C:\\u99\\out";
 	private final static String OBJECT_KEY_ROOT = "UPLOAD_TEST_" + ThreadLocalRandom.current().nextInt(1000);
 	
 	private static List<FileKey> fileList;
