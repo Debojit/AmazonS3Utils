@@ -5,7 +5,7 @@
 
 	<groupId>com.alshaya.phoenix.integration.s3</groupId>
 	<artifactId>AmazonS3Utils</artifactId>
-	<version>0.1</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>AmazonS3Utils</name>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite tests="9" failures="0" name="com.alshaya.phoenix.integration.s3.ObjectOperationsTestCase" time="23.2" errors="0" skipped="1">
+  <properties>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="sun.boot.library.path" value="C:\u00\Java\jdk180181\jre\bin"/>
+    <property name="java.vm.version" value="25.181-b13"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="maven.multiModuleProjectDirectory" value="C:\Users\debosinh\SourceCode\ProofOfConcepts\AmazonS3Utils"/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="path.separator" value=";"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="user.script" value=""/>
+    <property name="user.country" value="US"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="C:\Users\debosinh\SourceCode\ProofOfConcepts\AmazonS3Utils"/>
+    <property name="java.runtime.version" value="1.8.0_181-b13"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
+    <property name="java.endorsed.dirs" value="C:\u00\Java\jdk180181\jre\lib\endorsed"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.io.tmpdir" value="C:\Users\debosinh\AppData\Local\Temp\"/>
+    <property name="line.separator" value="
+"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="user.variant" value=""/>
+    <property name="os.name" value="Windows 10"/>
+    <property name="classworlds.conf" value="C:\Users\debosinh\SourceCode\ProofOfConcepts\.metadata\.plugins\org.eclipse.m2e.launching\launches\m2conf2303869048279285150.tmp"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\u00\Java\jdk180181\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:/Program Files/Java/jre1.8.0_201/bin/server;C:/Program Files/Java/jre1.8.0_201/bin;C:/Program Files/Java/jre1.8.0_201/lib/amd64;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\u01\oraclexe\app\oracle\product\11.2.0\server\bin;;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\u02\Git\cmd;C:\u02\Microsoft VS Code\bin;C:\Program Files (x86)\Sennheiser\SoftphoneSDK\;C:\u03\PuTTY\;C:\WINDOWS\System32\OpenSSH\;C:\Users\debosinh\AppData\Local\Microsoft\WindowsApps;C:\u00\Java\jdk180181\bin;;C:\Users\debosinh\Desktop;;."/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="52.0"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="os.version" value="10.0"/>
+    <property name="user.home" value="C:\Users\debosinh"/>
+    <property name="user.timezone" value="Asia/Riyadh"/>
+    <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
+    <property name="java.specification.version" value="1.8"/>
+    <property name="file.encoding" value="Cp1252"/>
+    <property name="user.name" value="debosinh"/>
+    <property name="java.class.path" value="C:\u03\apache-maven-3.5.4\boot\plexus-classworlds-2.5.2.jar"/>
+    <property name="java.vm.specification.version" value="1.8"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.home" value="C:\u00\Java\jdk180181\jre"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -B install"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="user.language" value="en"/>
+    <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.8.0_181"/>
+    <property name="java.ext.dirs" value="C:\u00\Java\jdk180181\jre\lib\ext;C:\WINDOWS\Sun\Java\lib\ext"/>
+    <property name="sun.boot.class.path" value="C:\u00\Java\jdk180181\jre\lib\resources.jar;C:\u00\Java\jdk180181\jre\lib\rt.jar;C:\u00\Java\jdk180181\jre\lib\sunrsasign.jar;C:\u00\Java\jdk180181\jre\lib\jsse.jar;C:\u00\Java\jdk180181\jre\lib\jce.jar;C:\u00\Java\jdk180181\jre\lib\charsets.jar;C:\u00\Java\jdk180181\jre\lib\jfr.jar;C:\u00\Java\jdk180181\jre\classes"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="maven.home" value="C:\u03\apache-maven-3.5.4"/>
+    <property name="file.separator" value="\"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="sun.desktop" value="windows"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+  </properties>
+  <testcase classname="com.alshaya.phoenix.integration.s3.ObjectOperationsTestCase" name="tc1InvalidBucket" time="1.56"/>
+  <testcase classname="com.alshaya.phoenix.integration.s3.ObjectOperationsTestCase" name="tc2InvalidObjKey" time="0.785"/>
+  <testcase classname="com.alshaya.phoenix.integration.s3.ObjectOperationsTestCase" name="tc3FileUpload" time="6.194"/>
+  <testcase classname="com.alshaya.phoenix.integration.s3.ObjectOperationsTestCase" name="tc4FileDownload" time="12.386"/>
+  <testcase classname="com.alshaya.phoenix.integration.s3.ObjectOperationsTestCase" name="tc5CopyFile" time="1.026"/>
+  <testcase classname="com.alshaya.phoenix.integration.s3.ObjectOperationsTestCase" name="tc6MoveFile" time="0.409"/>
+  <testcase classname="com.alshaya.phoenix.integration.s3.ObjectOperationsTestCase" name="tc7FileDelete" time="0.31"/>
+  <testcase classname="com.alshaya.phoenix.integration.s3.ObjectOperationsTestCase" name="tc8MultiFileDelete" time="0.311">
+    <skipped/>
+  </testcase>
+  <testcase classname="com.alshaya.phoenix.integration.s3.ObjectOperationsTestCase" name="tc9ListBucketItems" time="0.219"/>
+</testsuite>

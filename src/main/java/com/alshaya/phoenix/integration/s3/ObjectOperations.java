@@ -13,6 +13,12 @@ import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CompleteMultipartUploadRequest;
+import software.amazon.awssdk.services.s3.model.CompletedMultipartUpload;
+import software.amazon.awssdk.services.s3.model.CompletedPart;
+import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
+import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
+import software.amazon.awssdk.services.s3.model.CreateMultipartUploadResponse;
 import software.amazon.awssdk.services.s3.model.Delete;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
@@ -25,6 +31,7 @@ import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 import software.amazon.awssdk.services.s3.paginators.ListObjectsV2Iterable;
 
 public class ObjectOperations {
@@ -52,13 +59,51 @@ public class ObjectOperations {
 																						   S3Exception,
 																						   AwsServiceException,
 																						   SdkClientException {
-		PutObjectRequest putRequest = PutObjectRequest.builder()
-													  .bucket(bucketName)
-													  .key(objKey)
-													  .build();
-		RequestBody payload = RequestBody.fromFile(new File(objLocalPath));
-		PutObjectResponse response = s3.putObject(putRequest, payload);
-		return response.sdkHttpResponse().isSuccessful();
+		boolean status;
+		if((new File(objLocalPath)).length() / (1024 * 1024) > 200) { //Multi-part upload if file size > 100MB
+			int parts = (int)(new File(objLocalPath)).length() / (1024 * 1024);
+			List<CompletedPart> complParts = new ArrayList<CompletedPart>(parts);
+			CreateMultipartUploadRequest request = CreateMultipartUploadRequest.builder()
+																			   .bucket(bucketName)
+																			   .key(objKey)
+																			   .build();
+			CreateMultipartUploadResponse response = s3.createMultipartUpload(request);
+			String uploadId = response.uploadId();
+			for(int i = 0; i < parts; i++) {
+				UploadPartRequest partRequest = UploadPartRequest.builder()
+																 .bucket(bucketName)
+																 .key(objKey)
+																 .uploadId(uploadId)
+																 .partNumber(i)
+																 .build();
+				String eTag = s3.uploadPart(partRequest, Paths.get(objLocalPath)).eTag();
+				complParts.add(CompletedPart.builder()
+											.partNumber(i)
+											.eTag(eTag)
+											.build());
+			}
+			
+			CompletedMultipartUpload complUpload = CompletedMultipartUpload.builder()
+																		   .parts(complParts)
+																		   .build();
+			CompleteMultipartUploadRequest complUpRequest = CompleteMultipartUploadRequest.builder()
+																						   .bucket(bucketName)
+																						   .key(objKey)
+																						   .uploadId(uploadId)
+																						   .multipartUpload(complUpload)
+																						   .build();
+			status = s3.completeMultipartUpload(complUpRequest).sdkHttpResponse().isSuccessful();
+		}
+		else { //If file size < 100MB, upload as normal
+			PutObjectRequest putRequest = PutObjectRequest.builder()
+					  .bucket(bucketName)
+					  .key(objKey)
+					  .build();
+			RequestBody payload = RequestBody.fromFile(new File(objLocalPath));
+			PutObjectResponse response = s3.putObject(putRequest, payload);
+			status = response.sdkHttpResponse().isSuccessful();
+		}
+		return status;
 	}
 	
 	public boolean deleteObject(String bucketName, String objKey) {
@@ -68,7 +113,7 @@ public class ObjectOperations {
 														   .build();
 		return s3.deleteObject(request).sdkHttpResponse().isSuccessful();
 	}
-
+	
 	public boolean deleteObjects(String bucketName, List<String> objKeys) {
 		List<ObjectIdentifier> objects = new ArrayList<ObjectIdentifier>(objKeys.size());
 		objKeys.forEach(objKey -> objects.add(ObjectIdentifier.builder()
@@ -82,14 +127,30 @@ public class ObjectOperations {
 														   .build();
 		return s3.deleteObjects(request).sdkHttpResponse().isSuccessful();
 	}
-
+	
+	public boolean copyObject(String srcBucket, String srcObjKey, String tgtBucket, String tgtObjKey) {
+		CopyObjectRequest request = CopyObjectRequest.builder()
+													 .copySource(srcBucket + "/" + srcObjKey)
+													 .bucket(tgtBucket)
+													 .key(tgtObjKey)
+													 .build();
+		return s3.copyObject(request).sdkHttpResponse().isSuccessful();
+	}
+	
+	public boolean moveObject(String srcBucket, String srcObjKey, String tgtBucket, String tgtObjKey) {
+		if(this.copyObject(srcBucket, srcObjKey, tgtBucket, tgtObjKey))
+			return this.deleteObject(srcBucket, srcObjKey);
+		else
+			return false;
+	}
+	
 	public List<String> listObject(String bucketName) {
 		List<String> objectList = new ArrayList<String>();
 		
 		ListObjectsV2Request listReq = ListObjectsV2Request.builder()
-                .bucket(bucketName)
-                .maxKeys(1000)
-                .build();
+											               .bucket(bucketName)
+											               .maxKeys(1000)
+											               .build();
 		
 		ListObjectsV2Iterable listRes = s3.listObjectsV2Paginator(listReq);
 		listRes.stream()

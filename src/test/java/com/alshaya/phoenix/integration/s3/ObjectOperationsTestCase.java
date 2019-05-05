@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 public class ObjectOperationsTestCase {
 	
 	private static final String REGION_NAME = "ap-south-1";
-	private final String BUCKET_NAME = "als-fenix-bucket";
+	private static final String BUCKET_NAME = "als-fenix-bucket";
 	private static final String FILE_IN_DIR = "C:\\u04\\in";
 	private static final String FILE_OUT_DIR = "C:\\u04\\out";
 	private static final String OBJECT_KEY_ROOT = "UPLOAD_TEST_" + ThreadLocalRandom.current().nextInt(1000);
@@ -51,7 +51,7 @@ public class ObjectOperationsTestCase {
 			RandomAccessFile testFile;
 			try {
 				testFile = new RandomAccessFile(fileName, "rw");
-				testFile.setLength(1024 * 1024); //File  size = 1MB
+				testFile.setLength(1024 * 1024); //File  size = 200MB
 				testFile.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -69,6 +69,8 @@ public class ObjectOperationsTestCase {
 											(new java.io.File(FILE_IN_DIR + File.separator + Paths.get(fileKey.localFileName).getFileName())).delete();
 										} catch (Exception ee) {/**Ignore Error and continue**/}
 									});
+		objOps.listObject(BUCKET_NAME).forEach(key -> objOps.deleteObject(BUCKET_NAME, key));
+		objOps.listObject("als-tgt-bucket").forEach(key -> objOps.deleteObject("als-tgt-bucket", key));
 	}
 	
 	@BeforeClass
@@ -108,14 +110,30 @@ public class ObjectOperationsTestCase {
 	}
 	
 	@Test
-	public void tc5FileDelete() {
-		boolean status = objOps.deleteObject(BUCKET_NAME, fileList.get(0).bucketObjKey);
+	public void tc5CopyFile() {
+		String tgtBucket = "als-tgt-bucket";
+		boolean status = objOps.copyObject(BUCKET_NAME, fileList.get(0).bucketObjKey, tgtBucket, fileList.get(0).bucketObjKey);
 		Assert.assertTrue(status);
 	}
 	
 	@Test
+	public void tc6MoveFile() {
+		String tgtBucket = "als-tgt-bucket";
+		boolean status = objOps.moveObject(BUCKET_NAME, fileList.get(0).bucketObjKey, tgtBucket, fileList.get(0).bucketObjKey);
+		Assert.assertTrue(status);
+	}
+	
+	@Test
+	public void tc7FileDelete() {
+		boolean status = objOps.deleteObject(BUCKET_NAME, fileList.get(0).bucketObjKey);
+		Assert.assertTrue(status);
+		String tgtBucket = "als-tgt-bucket";
+		objOps.deleteObject(tgtBucket, fileList.get(0).bucketObjKey);
+	}
+	
+	@Test
 	@Ignore
-	public void tc6MultiFileDelete() {
+	public void tc8MultiFileDelete() {
 		List<String> objKeys = new ArrayList<String>(fileList.size());
 		fileList.forEach(fileEntry -> objKeys.add(fileEntry.bucketObjKey));
 		
@@ -124,7 +142,7 @@ public class ObjectOperationsTestCase {
 	}
 	
 	@Test
-	public void tc7ListBucketItems() {
+	public void tc9ListBucketItems() {
 		List<String> objKeys = objOps.listObject(BUCKET_NAME);
 		Assert.assertNotNull(objKeys);
 		Assert.assertNotEquals(objKeys.size(), 0);
