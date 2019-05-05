@@ -41,8 +41,18 @@ public class ObjectOperationsTestCase {
 	@BeforeClass
 	public static void createUploadFiles() {
 		final int MAX_FILE_COUNT = 2;
+		
+		//Create file directories if they don't exists
+		File dir = new File(FILE_IN_DIR);
+		if(!dir.exists())
+			dir.mkdir();
+		dir = new File(FILE_OUT_DIR);
+		if(!dir.exists())
+			dir.mkdir();
+		
 		fileList = new ArrayList<FileKey>(MAX_FILE_COUNT);
 		
+		//Create test files and object keys
 		for (int i = 0; i < MAX_FILE_COUNT; i++) {
 			String fileName = FILE_OUT_DIR + File.separator + "test_file_" + i + ".bin";
 			String objKey = OBJECT_KEY_ROOT + "/test_file_" + ThreadLocalRandom.current().nextInt(1000) + ".dat";
