@@ -60,7 +60,8 @@ public class ObjectOperations {
 																						   AwsServiceException,
 																						   SdkClientException {
 		boolean status;
-		if((new File(objLocalPath)).length() / (1024 * 1024) > 200) { //Multi-part upload if file size > 100MB
+		long fileSize = (new File(objLocalPath)).length() / (1024 * 1024);
+		if(fileSize > 100) { //Multi-part upload if file size > 100MB
 			int parts = (int)(new File(objLocalPath)).length() / (1024 * 1024);
 			List<CompletedPart> complParts = new ArrayList<CompletedPart>(parts);
 			CreateMultipartUploadRequest request = CreateMultipartUploadRequest.builder()
@@ -74,7 +75,7 @@ public class ObjectOperations {
 																 .bucket(bucketName)
 																 .key(objKey)
 																 .uploadId(uploadId)
-																 .partNumber(i)
+																 .partNumber(i + 1)
 																 .build();
 				String eTag = s3.uploadPart(partRequest, Paths.get(objLocalPath)).eTag();
 				complParts.add(CompletedPart.builder()

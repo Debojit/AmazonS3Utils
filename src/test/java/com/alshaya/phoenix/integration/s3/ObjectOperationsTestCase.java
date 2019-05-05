@@ -31,8 +31,8 @@ public class ObjectOperationsTestCase {
 	
 	private static final String REGION_NAME = "ap-south-1";
 	private static final String BUCKET_NAME = "als-fenix-bucket";
-	private static final String FILE_IN_DIR = "C:\\u04\\in";
-	private static final String FILE_OUT_DIR = "C:\\u04\\out";
+	private static final String FILE_IN_DIR = "C:\\u99\\in";
+	private static final String FILE_OUT_DIR = "C:\\u99\\out";
 	private static final String OBJECT_KEY_ROOT = "UPLOAD_TEST_" + ThreadLocalRandom.current().nextInt(1000);
 	
 	private static List<FileKey> fileList;
@@ -51,7 +51,7 @@ public class ObjectOperationsTestCase {
 			RandomAccessFile testFile;
 			try {
 				testFile = new RandomAccessFile(fileName, "rw");
-				testFile.setLength(1024 * 1024); //File  size = 200MB
+				testFile.setLength(200 * 1024 * 1024);
 				testFile.close();
 			} catch (IOException e) {
 				e.printStackTrace();
