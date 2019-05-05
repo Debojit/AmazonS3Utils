@@ -18,6 +18,7 @@ import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
@@ -28,10 +29,11 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ObjectOperationsTestCase {
 	
+	private static final String REGION_NAME = "ap-south-1";
 	private final String BUCKET_NAME = "als-fenix-bucket";
-	private final static String FILE_IN_DIR = "C:\\u04\\in";
-	private final static String FILE_OUT_DIR = "C:\\u04\\out";
-	private final static String OBJECT_KEY_ROOT = "UPLOAD_TEST_" + ThreadLocalRandom.current().nextInt(1000);
+	private static final String FILE_IN_DIR = "C:\\u04\\in";
+	private static final String FILE_OUT_DIR = "C:\\u04\\out";
+	private static final String OBJECT_KEY_ROOT = "UPLOAD_TEST_" + ThreadLocalRandom.current().nextInt(1000);
 	
 	private static List<FileKey> fileList;
 	private static ObjectOperations objOps;
@@ -61,18 +63,16 @@ public class ObjectOperationsTestCase {
 	@AfterClass
 	public static void cleanup() {
 		Assume.assumeTrue(null != fileList  && fileList.size() != 0);
-		try {
-			fileList.forEach(fileKey -> {(new java.io.File(fileKey.localFileName)).delete();
-										 (new java.io.File(FILE_IN_DIR + File.separator + Paths.get(fileKey.localFileName).getFileName())).delete();
-										});
-		} catch(Exception ee) {
-			/**Ignore Error and continue**/
-		}
+		fileList.forEach(fileKey -> { 
+										try {
+											(new java.io.File(fileKey.localFileName)).delete();
+											(new java.io.File(FILE_IN_DIR + File.separator + Paths.get(fileKey.localFileName).getFileName())).delete();
+										} catch (Exception ee) {/**Ignore Error and continue**/}
+									});
 	}
 	
 	@BeforeClass
 	public static void createClient() throws InvalidRegionException {
-		final String REGION_NAME = "ap-south-1";
 		objOps = new ObjectOperations(REGION_NAME);
 	}
 	
@@ -114,6 +114,7 @@ public class ObjectOperationsTestCase {
 	}
 	
 	@Test
+	@Ignore
 	public void tc6MultiFileDelete() {
 		List<String> objKeys = new ArrayList<String>(fileList.size());
 		fileList.forEach(fileEntry -> objKeys.add(fileEntry.bucketObjKey));
