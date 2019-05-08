@@ -76,6 +76,20 @@ public class ObjectOperationsTestCase {
 		objOps = new ObjectOperations(REGION_NAME);
 	}
 	
+	@Test
+	@Ignore
+	public void tc1InvalidCredentialsProfile() throws InvalidRegionException {
+		String credentialsProfile = "";
+		
+		new ObjectOperations(REGION_NAME, credentialsProfile);
+	}
+	
+	@Test(expected = InvalidRegionException.class)
+	public void tc2InvalidRegion() throws InvalidRegionException {
+		String invalidRegion = "this_is_an_invalid_region";
+		new ObjectOperations(invalidRegion);
+	}
+	
 	@Test(expected = NoSuchBucketException.class)
 	public void tc1InvalidBucket() {
 		String invalidBucket = "this_bucket_doesnt_exist";
