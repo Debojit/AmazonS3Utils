@@ -20,6 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 
+import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 /**
@@ -76,12 +77,11 @@ public class ObjectOperationsTestCase {
 		objOps = new ObjectOperations(REGION_NAME);
 	}
 	
-	@Test
-	@Ignore
+	@Test(expected = SdkException.class)
 	public void tc1InvalidCredentialsProfile() throws InvalidRegionException {
 		String credentialsProfile = "";
 		
-		new ObjectOperations(REGION_NAME, credentialsProfile);
+		(new ObjectOperations(REGION_NAME, credentialsProfile)).listObject(BUCKET_NAME);
 	}
 	
 	@Test(expected = InvalidRegionException.class)
