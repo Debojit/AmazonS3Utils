@@ -79,7 +79,7 @@ public class ObjectOperationsTestCase {
 	
 	@Test(expected = SdkException.class)
 	public void tc1InvalidCredentialsProfile() throws InvalidRegionException {
-		String credentialsProfile = "";
+		String credentialsProfile = "invalid_credentials_profile";
 		
 		(new ObjectOperations(REGION_NAME, credentialsProfile)).listObject(BUCKET_NAME);
 	}
