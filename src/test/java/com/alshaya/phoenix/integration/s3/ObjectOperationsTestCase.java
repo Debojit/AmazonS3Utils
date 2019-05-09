@@ -40,7 +40,7 @@ public class ObjectOperationsTestCase {
 	
 	@BeforeClass
 	public static void createUploadFiles() {
-		final int MAX_FILE_COUNT = 2;
+		final int MAX_FILE_COUNT = 1;
 		fileList = new ArrayList<FileKey>(MAX_FILE_COUNT);
 		
 		for (int i = 0; i < MAX_FILE_COUNT; i++) {
