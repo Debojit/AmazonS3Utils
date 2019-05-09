@@ -59,6 +59,7 @@ public class ObjectOperations {
 		PutObjectRequest putRequest = PutObjectRequest.builder()
 													  .bucket(bucketName)
 													  .key(objKey)
+													  .serverSideEncryption("AES256")
 													  .build();
 		RequestBody payload = RequestBody.fromFile(new File(objLocalPath));
 		PutObjectResponse response = s3.putObject(putRequest, payload);
