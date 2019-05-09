@@ -20,6 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 
+import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 /**
@@ -40,16 +41,7 @@ public class ObjectOperationsTestCase {
 	
 	@BeforeClass
 	public static void createUploadFiles() {
-		final int MAX_FILE_COUNT = 2;
-		
-		//Create file directories if they don't exists
-		File dir = new File(FILE_IN_DIR);
-		if(!dir.exists())
-			dir.mkdir();
-		dir = new File(FILE_OUT_DIR);
-		if(!dir.exists())
-			dir.mkdir();
-		
+		final int MAX_FILE_COUNT = 1;
 		fileList = new ArrayList<FileKey>(MAX_FILE_COUNT);
 		
 		//Create test files and object keys
@@ -84,6 +76,19 @@ public class ObjectOperationsTestCase {
 	@BeforeClass
 	public static void createClient() throws InvalidRegionException {
 		objOps = new ObjectOperations(REGION_NAME);
+	}
+	
+	@Test(expected = SdkException.class)
+	public void tc1InvalidCredentialsProfile() throws InvalidRegionException {
+		String credentialsProfile = "invalid_credentials_profile";
+		
+		(new ObjectOperations(REGION_NAME, credentialsProfile)).listObject(BUCKET_NAME);
+	}
+	
+	@Test(expected = InvalidRegionException.class)
+	public void tc2InvalidRegion() throws InvalidRegionException {
+		String invalidRegion = "this_is_an_invalid_region";
+		new ObjectOperations(invalidRegion);
 	}
 	
 	@Test(expected = NoSuchBucketException.class)

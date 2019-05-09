@@ -20,9 +20,13 @@ public class Client {
 	
 	public static S3Client createClient(String regionName, String credentialsProfile) throws InvalidRegionException{
 		S3Client client = null;
-		if (Region.regions().contains(Region.of(regionName)))
+		if("".equalsIgnoreCase(credentialsProfile))
+			client = createClient(regionName);
+		else if (Region.regions().contains(Region.of(regionName)))
 			client = S3Client.builder()
-							   .credentialsProvider(ProfileCredentialsProvider.builder().profileName(credentialsProfile).build())
+							   .credentialsProvider(ProfileCredentialsProvider.builder()
+									   										  .profileName(credentialsProfile)
+									   										  .build())
 							   .region(Region.of(regionName))
 							   .build();
 		else
