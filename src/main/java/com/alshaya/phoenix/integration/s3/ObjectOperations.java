@@ -42,6 +42,10 @@ public class ObjectOperations {
 		s3 = Client.createClient(regionName);
 	}
 	
+	public ObjectOperations(String regionName, String credentialsProfile ) throws InvalidRegionException {
+		s3 = Client.createClient(regionName, credentialsProfile);
+	}
+	
 	public boolean getObject(String bucketName, String objKey, String fileName) throws NoSuchBucketException,
 																					   NoSuchKeyException,
 																					   S3Exception,
@@ -99,6 +103,7 @@ public class ObjectOperations {
 			PutObjectRequest putRequest = PutObjectRequest.builder()
 					  .bucket(bucketName)
 					  .key(objKey)
+					  .serverSideEncryption("AES256")
 					  .build();
 			RequestBody payload = RequestBody.fromFile(new File(objLocalPath));
 			PutObjectResponse response = s3.putObject(putRequest, payload);

@@ -61,11 +61,6 @@
                     </execution>
                 </executions>
                 <configuration>
-<!--                     <archive> -->
-<!--                         <manifest> -->
-<!--                             <mainClass>com.alshaya.phoenix.integration.s3.ObjectOperations</mainClass> -->
-<!--                         </manifest> -->
-<!--                     </archive> -->
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>

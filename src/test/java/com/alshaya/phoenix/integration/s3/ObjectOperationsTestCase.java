@@ -20,6 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 
+import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 /**
@@ -30,19 +31,20 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 public class ObjectOperationsTestCase {
 	
 	private static final String REGION_NAME = "ap-south-1";
-	private static final String BUCKET_NAME = "als-fenix-bucket";
-	private static final String FILE_IN_DIR = "C:\\u99\\in";
-	private static final String FILE_OUT_DIR = "C:\\u99\\out";
-	private static final String OBJECT_KEY_ROOT = "UPLOAD_TEST_" + ThreadLocalRandom.current().nextInt(1000);
+	private final String BUCKET_NAME = "als-fenix-bucket";
+	private final static String FILE_IN_DIR = "C:\\u99\\in";
+	private final static String FILE_OUT_DIR = "C:\\u99\\out";
+	private final static String OBJECT_KEY_ROOT = "UPLOAD_TEST_" + ThreadLocalRandom.current().nextInt(1000);
 	
 	private static List<FileKey> fileList;
 	private static ObjectOperations objOps;
 	
 	@BeforeClass
 	public static void createUploadFiles() {
-		final int MAX_FILE_COUNT = 2;
+		final int MAX_FILE_COUNT = 1;
 		fileList = new ArrayList<FileKey>(MAX_FILE_COUNT);
 		
+		//Create test files and object keys
 		for (int i = 0; i < MAX_FILE_COUNT; i++) {
 			String fileName = FILE_OUT_DIR + File.separator + "test_file_" + i + ".bin";
 			String objKey = OBJECT_KEY_ROOT + "/test_file_" + ThreadLocalRandom.current().nextInt(1000) + ".dat";
@@ -76,6 +78,19 @@ public class ObjectOperationsTestCase {
 	@BeforeClass
 	public static void createClient() throws InvalidRegionException {
 		objOps = new ObjectOperations(REGION_NAME);
+	}
+	
+	@Test(expected = SdkException.class)
+	public void tc1InvalidCredentialsProfile() throws InvalidRegionException {
+		String credentialsProfile = "invalid_credentials_profile";
+		
+		(new ObjectOperations(REGION_NAME, credentialsProfile)).listObject(BUCKET_NAME);
+	}
+	
+	@Test(expected = InvalidRegionException.class)
+	public void tc2InvalidRegion() throws InvalidRegionException {
+		String invalidRegion = "this_is_an_invalid_region";
+		new ObjectOperations(invalidRegion);
 	}
 	
 	@Test(expected = NoSuchBucketException.class)

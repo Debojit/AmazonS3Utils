@@ -16,4 +16,20 @@ public class Client {
 			throw new InvalidRegionException("Invalid region " + regionName + ". Process aborted.");
 		return client;
 	}
+	
+	public static S3Client createClient(String regionName, String credentialsProfile) throws InvalidRegionException{
+		S3Client client = null;
+		if("".equalsIgnoreCase(credentialsProfile))
+			client = createClient(regionName);
+		else if (Region.regions().contains(Region.of(regionName)))
+			client = S3Client.builder()
+							   .credentialsProvider(ProfileCredentialsProvider.builder()
+									   										  .profileName(credentialsProfile)
+									   										  .build())
+							   .region(Region.of(regionName))
+							   .build();
+		else
+			throw new InvalidRegionException("Invalid region " + regionName + ". Process aborted.");
+		return client;
+	}
 }
