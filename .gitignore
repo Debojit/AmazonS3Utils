@@ -39,3 +39,9 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
+.classpath
+target/classes/META-INF/maven/com.alshaya.phoenix.integration.s3/AmazonS3Utils/pom.properties
+.classpath
+.gitignore
+.settings/org.eclipse.jdt.core.prefs
+target/*
